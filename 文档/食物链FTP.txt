@@ -1,0 +1,10 @@
+http://120.25.156.253/
+
+FTP:
+120.25.156.253 root:QAZqaz123
+
+ssh root@120.25.156.253 
+cd /usr/www
+Êý¾Ý¿â
+root
+www.splian.com
