@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+  
+  
+  <!-- ================== app start ===================== -->
+	
+   
+	 <bean id="loginApp" parent="txProxyTemplate">
+      <property name="target">
+        	 <bean class="com.mainone.app.admin.LoginAppImpl">
+        			<property name="IBaseServiceDaoA" ref="iBaseServiceDaoA"/>
+        			<property name="IBaseServiceDaoB" ref="iBaseServiceDaoB"/> 
+        			<property name="IBaseServiceDaoC" ref="iBaseServiceDaoC"/> 
+        	 </bean>
+        </property>        
+     </bean>
+   
+   <!-- ================== app end ===================== -->
+   
+
+  <!-- ================== action start ===================== -->
+  
+   
+   
+   <bean id="loginAction" class="com.mainone.action.admin.LoginAction"
+         scope="prototype">
+      <property name="loginApp" ref="loginApp"/>
+   </bean>
+   
+	<!-- ================== action end ===================== -->
+</beans>

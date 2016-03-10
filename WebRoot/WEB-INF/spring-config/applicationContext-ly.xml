@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+   <!-- ================== app start ===================== -->
+  <bean id="visitReviewApp" parent="txProxyTemplate">
+      <property name="target">
+        	 <bean class="com.mainone.app.talk.VisitReviewAppImpl">
+        			<property name="IBaseServiceDaoA" ref="iBaseServiceDaoA"/>
+        			<property name="pageBean" ref="pageBean"/>
+        	 </bean>
+        </property> 
+        <property name="transactionAttributes"> 
+         <props>
+            <prop key="save*">PROPAGATION_REQUIRED</prop>
+            <prop key="edit*">PROPAGATION_REQUIRED</prop>
+            <prop key="del*">PROPAGATION_REQUIRED</prop>
+            <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+         </props>
+      </property>  
+     </bean>
+     
+     
+   <!-- ================== app end ===================== -->
+
+
+   <!-- ================== action start ===================== -->
+  <bean id="visitReviewAction" class="com.mainone.action.talk.VisitReviewAction"
+         scope="prototype">
+      <property name="visitReviewApp" ref="visitReviewApp"/>
+      <property name="commonApp" ref="commonApp"/>
+   </bean>
+   
+   <!-- ================== action end ===================== -->
+</beans>

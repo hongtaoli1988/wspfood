@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="jsonData" extends="json-default">
+	 
+      <action name="loginCommonAction" class="jsonCommonAction" method="login">
+      	 	<result name="success" type="json">
+                <!--  
+                <param name="excludeProperties">talkList,userName,passWord</param>
+                <param name="message">${message}</param>
+                -->
+                <param name="root">loginList</param>
+			</result>
+      </action>
+      
+      <action name="searchProtectAction" class="jsonCommonAction" method="searchProtectCustomer">
+      	 	<result name="success" type="json">
+                <param name="root">protectList</param>
+			</result>
+      </action>
+      
+      <action name="jsonCommonAction" class="jsonCommonAction" method="search">
+      	 	<result name="success" type="json">
+                <param name="includeProperties">talkList.*,message</param>
+			</result>
+      </action>
+
+       
+	</package>   
+
+</struts>
+ 

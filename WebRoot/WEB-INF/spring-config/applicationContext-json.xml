@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+   <!-- ================== app start ===================== -->
+  <bean id="jsonCommonApp" parent="txProxyTemplate">
+      <property name="target">
+        	 <bean class="com.mainone.app.json.JsonCommonAppImpl">
+        			<property name="IBaseServiceDaoA" ref="iBaseServiceDaoA"/>
+        	 </bean>
+        </property> 
+        <property name="transactionAttributes"> 
+         <props>
+            <prop key="save*">PROPAGATION_REQUIRED</prop>
+            <prop key="edit*">PROPAGATION_REQUIRED</prop>
+            <prop key="del*">PROPAGATION_REQUIRED</prop>
+            <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+         </props>
+      </property>  
+     </bean>
+     
+     
+   <!-- ================== app end ===================== -->
+
+
+   <!-- ================== action start ===================== -->
+  <bean id="jsonCommonAction" class="com.mainone.action.json.JsonCommonAction"
+         scope="prototype">
+      <property name="jsonCommonApp" ref="jsonCommonApp"/>
+      <property name="loginApp" ref="loginApp"/>
+   </bean> 
+   
+   <!-- ================== action end ===================== -->
+</beans>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- START SNIPPET: dwr -->
+<!DOCTYPE dwr PUBLIC 
+    "-//GetAhead Limited//DTD Direct Web Remoting 1.0//EN" 
+    "http://www.getahead.ltd.uk/dwr/dwr10.dtd">
+
+<dwr>
+	<allow>
+		<create creator="spring" javascript="loginAction">
+			<param name="beanName" value="loginAction" />
+		</create>
+		<create creator="spring" javascript="customerProtectAction">
+			<param name="beanName" value="customerProtectAction" />
+		</create>
+		<create creator="spring" javascript="talkCusAction">
+			<param name="beanName" value="talkCusAction" />
+		</create>
+		<create creator="spring" javascript="visitReviewAction">
+			<param name="beanName" value="visitReviewAction" />
+		</create>
+	</allow>
+</dwr>

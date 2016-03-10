@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="wspfood"
+  id="myeclipse.1456801816488"
+  context-root="/wspfood"
+  j2ee-spec="5.0"
+  archive="wspfood.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<!-- ================== app start ===================== -->
+	
+	<bean id="customerProtectApp" parent="txProxyTemplate">
+      <property name="target">
+        	 <bean class="com.mainone.app.customer.CustomerProtectAppImpl">
+        			<property name="IBaseServiceDaoA" ref="iBaseServiceDaoA"/>
+        	 </bean>
+        </property> 
+        <property name="transactionAttributes"> 
+         <props>
+            <prop key="save*">PROPAGATION_REQUIRED</prop>
+            <prop key="edit*">PROPAGATION_REQUIRED</prop>
+            <prop key="del*">PROPAGATION_REQUIRED</prop>
+            <prop key="give*">PROPAGATION_REQUIRED</prop>
+            <prop key="imp*">PROPAGATION_REQUIRED</prop>
+            <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+         </props>
+      </property>  
+     </bean>
+     
+   <!-- ================== app end ===================== -->
+   
+   
+   <!-- ================== action start ===================== -->
+   
+   <bean id="customerProtectAction" class="com.mainone.action.customer.CustomerProtectAction"
+         scope="prototype">
+      <property name="customerProtectApp" ref="customerProtectApp"/>
+      <property name="commonApp" ref="commonApp"/>
+   </bean>
+  
+	<!-- ================== action end ===================== -->
+</beans>
