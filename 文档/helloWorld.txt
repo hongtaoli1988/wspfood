@@ -8,10 +8,38 @@
 
 
 
-1、HR resin服务器 ehcache缓存字典。 struts2+Hibernate+Spring+resin
-2、ac、am apache tomcat服务器负载均衡。 struts2+Hibernate+Spring+Apache+tomcat
-3、mis 分布式事务 struts+hibernate+spring+tomcat
-4、dai  tomcat    springMVC+mybatis+spring+shiro(jeesite框架生成)
+1、HR resin服务器 ehcache缓存字典。 resin+struts2+Hibernate+Spring+sqlserver
+项目用到的技术：
+	1、页面布局引入FRAME框架页，分为标题栏，菜单导航栏，主页面显示，采用原生document开发。主要效果，用户登录时，查询此用户关联角色的所有功能信息，在菜单导航栏显示其父目录及其所有子目录功能模块(默认子目录功能隐藏)，父目录标签添加OnClick事件，显示子目录功能。js控制页面form表单提交，将服务器返回结果在页面显示，自定义分页组件PageBean，实现分页查询、显示功能，与服务器异步交互采用ajax和DWR框架。
+	2、项目采用ehcache缓存常用数据字典等公司、部门查询显示。
+	3、
+
+
+
+
+
+
+
+
+
+
+2、ac、am apache tomcat服务器负载均衡。 Apache+tomcat+struts2+Hibernate+Spring+sqlserver
+	1、项目由铭万代理商渠道使用，为避免服务器宕机或高并发访问效率低下问题，项目采用Apache2.2+Tomcat6.0负载均衡，session沾贴。
+	3、页面布局引入SiteMesh框架、将网页的布局(铭万代理导航栏、菜单栏)及显示内容分离，从而达到页面结构共享。
+建立装饰页面，原生态document开发、根据登陆用户关联角色所有功能信息，在菜单栏显示其所有功能模块。被装饰页面由js控制form表单提交、自定义struts2标签回显数据。
+	2、项目采用前台代理商使用与后台管理分离的模式，后台主要有公司客服控制人员权限、添加产品、。。。功能
+前台代理商主要用于购买公司平台产品，购买验证与生成订单皆调由webservice接口推送数据。
+	4、
+
+
+
+
+
+3、mis 分布式事务 tomcat+struts+hibernate+spring
+	1、mis系统为公司合同管理系统，主要分为三个系统，供不同分公司使用。三系统数据共享、
+
+
+4、dai  tomcat    tomcat+springMVC+mybatis+spring+shiro(jeesite框架生成)
 
 1、struts2+Hibernate+Spring :项目
 web.xml配置：
