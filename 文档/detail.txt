@@ -1,0 +1,43 @@
+1、自定义过滤器实现Filter接口，复写doFilter方法
+ 	try {  
+            // Filter 只是链式处理，请求依然转发到目的地址。  
+            chain.doFilter(req, res);  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+        System.out.println("after the log filter!");  
+2、监听器例子：
+	1、定时器(容器启动时告知容器)
+	定义InitListener实现ServletContextListener，复写contextInitialized方法，需要在web.xml配置
+	定义任务UseTimer继承TimerTask复写run方法，即为要执行的方法。
+	Timer timmerTask = new Timer();
+	timmerTask.schedule(new UseTimer(), 30000, 60*60*1000);//每小时执行一次
+	2、监听session(当创建或销毁session)
+	定义SessionListener继承HttpServlet，实现HttpSessionListener，
+	复写sessionCreated// 创建session
+	复写sessionDestroyed// 释放session ，需要在web.xml配置
+3、自定义拦截器继承AbstractInterceptor，复写intercept方法，
+	struts2配置文件中 
+        <!-- 定义一个拦截器 -->  
+        <interceptors>  
+            <interceptor name="authority"  
+                class="com.ywjava.interceptot.LoginInterceptor">  
+            </interceptor>  
+            <!-- 定义拦截器栈 -->  
+            <interceptor-stack name="mydefault">  
+                <interceptor-ref name="defaultStack" />  
+                <interceptor-ref name="authority" />  
+            </interceptor-stack>  
+        </interceptors>  
+	最后对应action引入拦截器栈
+4、 Query query = session.createSQLQuery(sql);
+    Query query = session.createQuery(hql);
+
+5、自定义标签：
+
+
+产品、财务、销售管理：产品设置、协议、技术
+业务管理：
+代理管理：
+权限管理：
+系统设置：
