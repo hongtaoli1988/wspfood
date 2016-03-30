@@ -34,6 +34,31 @@
     Query query = session.createQuery(hql);
 
 5、自定义标签：
+	1、定义PageTag extends ComponentTagSupport
+	2、定义Pages extends Component 复写end(Writer writer)方法
+	3、定义tld文件。
+6、
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 产品、财务、销售管理：产品设置、协议、技术
