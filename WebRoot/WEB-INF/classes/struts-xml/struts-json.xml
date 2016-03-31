@@ -6,7 +6,7 @@
 <struts>
 	<package name="jsonData" extends="json-default">
 	 
-      <action name="loginCommonAction" class="jsonCommonAction" method="login">
+      <action name="loginCommonAction_*" class="jsonCommonAction" method="{1}">
       	 	<result name="success" type="json">
                 <!--  
                 <param name="excludeProperties">talkList,userName,passWord</param>
