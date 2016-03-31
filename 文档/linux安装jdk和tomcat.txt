@@ -1,0 +1,26 @@
+----安装JDK
+//使当前用户拥有执行权限
+[root@iZ945efigu6Z local]# chmod a+x jdk-6u45-linux-x64.bin 
+//安装
+[root@iZ945efigu6Z local]#./jdk-6u45-linux-x64.bin
+//配置环境
+第三步：配置环境变量
+
+<1># vi /etc/profile
+
+<2>在最后加入以下几行：
+
+export JAVA_HOME=/usr/local/jdk1.6.0_45
+
+export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
+export PATH=$PATH:$JAVA_HOME/bin
+
+<3># source /etc/profile   执行后生效
+
+
+--安装tomcat
+[root@iZ945efigu6Z local]# tar zxvf apache-tomcat-6.0.45.tar.gz
+[root@iZ945efigu6Z local]# mv apache-tomcat-6.0.45 tomcat6
+
+

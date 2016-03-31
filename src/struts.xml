@@ -18,8 +18,10 @@
    <!-- Add packages here -->
    <include file="struts-xml/struts-json.xml"/>
    <include file="struts-xml/struts-base.xml"/>
+   <!--
    <include file="struts-xml/struts-sfa.xml"/>
    <include file="struts-xml/struts-zzf.xml"/>
    <include file="struts-xml/struts-zl.xml"/>
    <include file="struts-xml/struts-ly.xml"/>
+     -->
 </struts>   
