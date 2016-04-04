@@ -54,6 +54,9 @@ apache tomcat服务器负载均衡。 Apache+tomcat6+struts2+Hibernate+Spring+sqlserver
 6、三希堂公司图书管理
 	1、图书购买
 
+1、会员注册及多线程发送邮箱验证。
+2、在线支付功能。
+
 
 
 
