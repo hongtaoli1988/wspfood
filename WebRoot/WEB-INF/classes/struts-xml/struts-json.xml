@@ -7,12 +7,17 @@
 	<package name="jsonData" extends="json-default">
 	 
       <action name="loginCommonAction_*" class="jsonCommonAction" method="{1}">
-      	 	<result name="success" type="json">
+      		<!-- 验证用户名密码 -->
+      	 	<result name="login_success" type="json">
                 <!--  
                 <param name="excludeProperties">talkList,userName,passWord</param>
                 <param name="message">${message}</param>
                 -->
                 <param name="root">loginList</param>
+			</result>
+			<!-- 产品推荐-->
+      	 	<result name="productRecommend_success" type="json">
+                <param name="root">productRecommendList</param>
 			</result>
       </action>
       

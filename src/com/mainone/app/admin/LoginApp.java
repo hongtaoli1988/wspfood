@@ -11,41 +11,30 @@ import com.mainone.util.DBRecord;
  * 功能描述 
  */
 public interface LoginApp {
+	//根据用户名密码更新
+	public boolean updateTokenUser(String auth_token,String userName,String passWord);
+	
 	/**
-	 * 得到岗位所对应的所有模块
-	 * @param userId 用户ID
-	 * @return
-	 */
-	public List getAllModule(String positiionId);
-	/**
-	 * 用户验证
+	 * 用户验证 根据用户名和密码
 	 * @param userName 用户名
 	 * @param passWord 密码
 	 * @return
 	 */
-	public DBRecord checkUser(String userName);
 	public DBRecord checkUser(String userName,String passWord);
 	/**
-	 * 验证此用户是否存在
+	 * 验证此用户是否存在 用户名和密码
 	 * @param userName 用户名
 	 * @param passWord 密码
 	 * @return true:存在 false:不存在
 	 */
-	public boolean checkUserIsExict(String userName,String passWord);
-	
+	public DBRecord checkUserIsExist(String userName,String passWord);
 	/**
-	 * 岗位验证
-	 * @param userId 用户ID
-	 * @return 岗位信息
+	 * 验证此用户是否存在 用户id和token
+	 * @param userName 用户名
+	 * @param passWord 密码
+	 * @return true:存在 false:不存在
 	 */
-	public DBRecord checkPosition(String userId);
-	
-	/**
-	 * 角色验证
-	 * @param POSITION_ID 岗位id
-	 * @return
-	 */
-	public DBRecord checkRole(String POSITION_ID);
+	public DBRecord checkUserIsLogin(String uid,String auth_key);
 	
 	/**
 	 * 查询公司字典表
@@ -53,17 +42,6 @@ public interface LoginApp {
 	 */
 	public String searchCompanyInfo(String CompanyID);
 	
-	/**
-	 * 今日到账统计
-	 * @return
-	 */
-	public String getGDT(String userId,String comId);
-	
-	/**
-	 * 保护客户数
-	 * @return
-	 */
-	public String getProtectNum(String employeeID);
 	
 
 }

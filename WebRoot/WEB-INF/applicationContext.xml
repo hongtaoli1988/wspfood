@@ -3,6 +3,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+	<bean id="placeholderConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>classpath:jdbc.properties</value>
+		</property>
+	</bean>
+
+
 	<!-- JNDI
 
 
@@ -29,10 +37,10 @@
 	 -->
 	 <!-- c3p0 -->
 	<bean id="dataSourceA" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
-		<property name="jdbcUrl" value="jdbc:mysql://120.25.156.253:3306/shipinlian"></property>
-		<property name="user" value="root"></property>
-		<property name="password" value="www.splian.com"></property>
+		<property name="driverClass" value="${datasource.driverClassName}"></property>
+		<property name="jdbcUrl" value="${datasource.Url}"></property>
+		<property name="user" value="${datasource.Username}"></property>
+		<property name="password" value="${datasource.Password}"></property>
 		<!--连接池中保留的最小连接数。-->
 		<property name="minPoolSize" value="10" />
 		<!--连接池中保留的最大连接数。Default: 15 -->  

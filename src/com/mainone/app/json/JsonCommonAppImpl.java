@@ -9,11 +9,8 @@ import javax.servlet.http.HttpSession;
 import uk.ltd.getahead.dwr.WebContext;
 import uk.ltd.getahead.dwr.WebContextFactory;
 
-import com.mainone.app.admin.LoginInfo;
 import com.mainone.dao.IBaseServiceDao;
 import com.mainone.ehcache.MyCacheManager;
-import com.mainone.model.sfa.SfaCustomerInfo;
-import com.mainone.model.sfa.SfaLinkManInfo;
 import com.mainone.util.DBRecord;
 import com.mainone.util.PageBean;
 import com.mainone.util.PropertyFileUtil;
@@ -105,5 +102,24 @@ public class JsonCommonAppImpl implements JsonCommonApp {
 		
 		return array;
 	}
-	
+	//²úÆ·ÍÆ¼ö
+	public List getproductRecommendService(int currentPage, int pageSize,
+			String uid, String condition) {
+		 List listResult = new ArrayList();
+		 StringBuffer sql = new StringBuffer();
+		 sql.append(" select u.uid,u.username,g.id as good_id,g.title,g.score,g.addtime,g.address,g.picture,g.summary,g.scan,'100' as mylike,g.comments,g.dynamic from user u ");
+		 sql.append(" join goods g on u.uid = g.uid where 1=1");
+		 if (uid!= null && !"".equals(uid)) {
+			 sql.append(" and u.uid = '").append(uid).append("'");
+           
+         }
+		 if (condition!= null && !"".equals(condition)) {
+			 sql.append(" and (g.title like '%" + condition.trim().replaceAll("'", "''") + "%'");
+           
+         }
+		 sql.append(" order by g.updatetime desc");
+		 System.out.println(sql.toString());
+		 listResult = iBaseServiceDaoA.findBySqlConditionParmFenYe(currentPage, pageSize, sql.toString());
+		 return listResult;
+	}
 }

@@ -11,7 +11,7 @@ public class PropertyFileUtil {
 		String keyValue = null;
 		try {
 			
-			ResourceBundle messages = ResourceBundle.getBundle("db");
+			ResourceBundle messages = ResourceBundle.getBundle("page");
 			keyValue = messages.getString(key);//取得所需要的值
 		} catch (Exception e) {
 			e.printStackTrace();
