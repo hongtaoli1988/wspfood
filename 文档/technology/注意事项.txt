@@ -1,0 +1,309 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Class.forName与ClassLoader.loadClass区别
+Class的装载包括3个步骤：加载（loading）,连接（link）,初始化（initialize）.
+Class.forName(className)实际上是调用Class.forName(className, true, this.getClass().getClassLoader())。第二个参数，是指Class被loading后是不是必须被初始化。
+ClassLoader.loadClass(className)实际上调用的是ClassLoader.loadClass(name, false)，第二个参数指Class是否被link。
+Class.forName(className)装载的class已经被初始化，而ClassLoader.loadClass(className)装载的class还没有被link。一般情况下，这两个方法效果一样，都能装载Class。但如果程序依赖于Class是否被初始化，就必须用Class.forName(name)了。
+例如，在JDBC编程中，常看到这样的用法，Class.forName("com.mysql.jdbc.Driver").
+如果换成了getClass().getClassLoader().loadClass("com.mysql.jdbc.Driver")，就不行。
+com.mysql.jdbc.Driver的源代码如下：
+// Register ourselves with the DriverManager
+static {
+    try {
+        java.sql.DriverManager.registerDriver(new Driver());
+    } catch (SQLException E) {
+        throw new RuntimeException("Can't register driver!");
+    }
+}
+原来，Driver在static块中会注册自己到java.sql.DriverManager。而static块就是在Class的初始化中被执行。
+所以这个地方就只能用Class.forName(className)。
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+对于静态变量、静态初始化块、变量、初始化块、构造器，它们的初始化顺序是： 
+（静态变量、静态初始化块）>（变量、初始化块）>构造器。 静态变量、静态初始化块(谁在前面、先执行谁、按照顺序执行)
+我们也可以通过下面的测试代码来验证这一点： 
+ public class InitialOrderTest 
+{   public static String staticField = "静态变量";   
+  // 静态变量 public String field = "变量";         // 变量  
+static {                 // 静态初始化块  
+System.out.println(staticField);  
+ System.out.println("静态初始化块");  }   
+{                   // 初始化块  
+System.out.println(field);  
+System.out.println("初始化块");  
+ }  
+ public InitialOrderTest() {             // 构造器  
+System.out.println("构造器"); 
+ }  
+
+public static void main(String[] args) 
+{   
+new InitialOrderTest(); 
+ }  
+ }   运行以上代码，我们会得到如下的输出结果：   
+静态变量   
+静态初始化块 
+变量  
+初始化块 
+构造器
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+类会在首次被“主动使用”时执行初始化，为类（静态）变量赋予正确的初始值。在Java代码中，一个正确的初始值是通过类变量初始化语句或者静态初始化块给出的。而我们这里所说的主动使用 包括：
+1.        创建类的实例
+2.        调用类的静态方法
+3.        使用类的非常量静态字段
+4.        调用Java API中的某些反射方法
+5.        初始化某个类的子类
+6.        含有main()方法的类启动时
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+看完上面的代码，大致明白动态代理的含义： 
+A接口有c方法，类B实现A接口，原本应该是执行B类中的c方法，可现在不这样做； 
+我声明产生B类的代理类B',由它来冒充B类的“兄弟”并“实现”A接口， 
+对外界来说B'应该也有c方法，可当真正调用它的时候， 
+它会去执行与它关联InvocationHandler的invoke()方法， 
+
+1.什么是动态代理? 
+一种用于转发请求，进行特殊处理的机制，“动态”应该指的是“运行期”。 
+2.为什么使用动态代理? 
+可以对请求进行任何处理(如事务，日志等，这都是网上说的，我当然可以做任何处理) 
+3.使用它有哪些好处? 
+如上 
+4.哪些地方需要动态代理? 
+不允许直接访问某些类；对访问要做特殊处理等，我只能想到这些。
+在这个方法里面你可以做很多事情。这样，这个请求就被“代理”到其它地方去了
+
+
+1.MVC：Model-View-Control  
+框架性质的C层要完成的主要工作：封装web请求为一个数据对象、调用业务逻辑层来处理数据对象、  
+返回处理数据结果及相应的视图给用户。 
+2.简要概述springmvc  Spring C 层框架的核心是 DispatcherServlet，
+它的作用是将请求分发给不同的后端处理器，
+也即 使用  了一种被称为Front Controller 的模式（后面对此模式有简要说明）。 
+Spring 的C 层框架使用了后端控  制器来、映射处理器和视图解析器来共同完成C 层框架的主要工作。
+并且spring 的C 层框架还真正地把  业务层处理的数据结果和相应的视图拼成一个对象，
+即我们后面会经常用到的ModelAndView 对象。
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+JDBC中的PreparedStatement相比Statement的好处有哪些?
+
+1、相对比较安全，可以防止sql注入
+2、有预编译功能，相同操作批量数据效率较高
+
+Statement stmt = conn.createStatement();
+ResultSet rs = stmt.executeQuery("select * from Cust where ID="+sid);
+
+PreparedStatement pstmt=conn.prepareStatement("select* from Cust where ID=?");[p
+pstmt.setInt(1, sid);
+ResultSet rs = pstmt.executeQuery();
+
+prepareStatement会先初始化SQL，先把这个SQL提交到数据库中进行预处理，多次使用可提高效率。
+createStatement不会初始化，没有预处理，没次都是从0开始执行SQL
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+String是一 个特殊的包装类数据。可以用： 
+String str = new String("abc"); 
+String str = "abc"; 
+两种的形式来创建，第一种是用new()来新 建对象的，它会在存放于堆中。每调用一次就会创建一个新的对象。 
+而第二种是先在栈中创建一个对String类的对象引用变量str，然后查找栈 中有没有存放"abc"，如果没有，则将"abc"存放进栈，并令str指向”abc”，如果已经有”abc” 则直接令str指向“abc”。 
+
+          比较类里面的数值是否相等时，用equals()方法；当 测试两个包装类的引用是否指向同一个对象时，用==， 下面用例子说明上面的理论。 
+String str1 = "abc"; 
+String str2 = "abc"; 
+System.out.println(str1==str2); //true 
+可以看出str1和 str2是指向同一个对象的。 
+
+String str1 =new String ("abc"); 
+String str2 =new String ("abc"); 
+System.out.println(str1==str2); // false 
+用new的方式是生成不同的对象。每一次生成一个 。
+final定义的变量必须初始化，若定义时未初始化，需要在构造器中初始化，否则报编译错误。
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Hibernate关于session.update（Object  object)方法的使用
+1、在使用hibernate更新数据时，建议最好使用hql语句进行更新，否则容易发生异常。
+2、常见的异常会出现如下：假设
+baseDao中updateObject的实现
+public void updateObject(T o) {  
+                getHibernateTemplate().update(o);  
+                getHibernateTemplate().flush();  
+        }  
+这样，可以看出baseDao是通过直接调用hibernate的session.update（Object  object）方法来对数据库进行更新的。
+而该方法在执行时，如果在session的缓冲区中存在与传入对象object有相同id的PO对象的话，
+就会抛出org.hibernate.NonUniqueObjectException 异常。
+解决办法：
+    既然是由于缓冲区里存在了相同id的对象导致异常的抛出，那么在update之前清空缓冲区不就行啦，
+于是将baseDao中updateObject方法修改成如下：
+public void updateObject(T o) {  
+		//调用update之前，清楚缓冲区中可能存在与o对象相同id的PO对象
+                getHibernateTemplate().clear();
+		//调用此方法以后，将o对象放入缓冲区中，此对象为持久化对象，但是此时并未更新数据库，若要同步更新数据库语句，需要调用
+		//下面flush方法----不调用flush 则在提交事务时，才会同步更新数据库语句  
+                getHibernateTemplate().update(o);  
+                getHibernateTemplate().flush();  
+        }  
+ 
+修改后执行果然没有异常抛出，数据也修改成功。
+！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+equals和==？？？？
+（1）== 比的是地址
+（2）任何类都继承Object类，Student是类，类使用equals方法时可以重写Object的equals方法来说明类之间如何进行比较，
+     String类就重写了equals方法，当类没有重写equals方法时，Object中的equals方法默认比较两个类的地址
+（3）所以：
+stu1==stu2                地址不同：false
+stu1.equals(stu2)      Student没重写equals，比地址，地址不同：false
+stu2==stu3                由于Student stu3=stu2; 使得地址相同：true
+stu2.equals(stu3)      Student没重写equals，比地址，地址相同：true
+！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+比如我看有些是这样写的：
+<s:iterator id="page" value="List"></s:iterator>
+<s:iterator id="page" value="#List"></s:iterator>
+值栈中的对象的不使用#，非值栈中的对象使用#
+如果你不理解值栈的作用，简单点理解：当前action，或者处于action链中的action所拥有的属性，
+并且为该属性提供了getter和setter方法，那么在jsp中就不需要使用#，除此之外需要使用#，
+那么从这里你就可以知道action的属性如果提供了getter和setter方法，那么这些属性值就会放置到值栈中。。。
+
+S标签中用#可以取出堆栈上下文中的存放的对象. 
+用%{}可以取出存在值堆栈中的Action对象,直接调用它的方法.例如你的Action如果继承了ActionSupport .那么在页面标签中，
+用%{getText('key')}的方式可以拿出国际化信息. %{#}， 这是JSP2.1最新规范中的语法，是Struts2为其解决兼容性问题而写成%{#}的
+
+%{}强调的是从你设定的root点取
+#通常强调从上下文取 
+      如#parameters.name[0]等价于request.getParameter("name") 
+      如#session.name等价于session.getAttribute("name") 
+      如#request.name等价于request.getAttribute("name") 
+
+例子：
+其中
+this.vmoneyinfo = this.vmoneyService.getVmoneyinfoById(id);
+List<Vmoneysetinfo> vmoneysetList = vmoneyService.getAllEntities(Vmoneysetinfo.class);
+request.setAttribute("vmoneysetList", vmoneysetList);
+vmoneyinfo表示是action的属性
+vmoneysetList表示在request域中
+<s:iterator value="#request.vmoneysetList" id="vmoneyset">
+<!-- <s:iterator value="%{#request.vmoneysetList}" id="vmoneyset"> -->两者都可以
+	<s:if test="vmoneyinfo.vmoneysetid == #vmoneyset.id">
+			<option value="<s:property value='#vmoneyset.id'/>" selected="selected"><s:property value='#vmoneyset.name'/></option>
+			 </s:if>
+			<s:else>
+			 <option value="<s:property value='#vmoneyset.id'/>"><s:property value='#vmoneyset.name'/></option>
+	</s:else>
+</s:iterator>
+<s:property/> 里面的数据可以是属性， 也可以调用方法，默认是调用当前最top的对象的数据。
+所以上述<s:property value='#vmoneyset.name'/>或是<s:property value='vmoneyset.name'/>都可以，
+因为<s:iterator>会将循环的值放入值栈top顶层
+！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+struts2自定义拦截器使用：
+/**
+ * @desc 时间拦截器
+ * @author zhanglei
+ * @date 2012-12-10
+ */
+public class TimerInterceptor  extends MethodFilterInterceptor implements Interceptor{
+	 protected String doIntercept(ActionInvocation actionInvocation) throws Exception{
+	      ActionContext ctx = actionInvocation.getInvocationContext();
+	      Map session = ctx.getSession();
+	      String userId = (String)session.get("userId");
+	      if("".equals(userId) || null == userId){
+	         return "timer";
+	      }
+	      actionInvocation.invoke();
+	      return "";  
+	   }
+	}
+
+配置文件：
+<struts>
+   <package name="base" extends="struts-default">
+    <interceptors>
+         <interceptor name="timerInterceptor" class="com.mainone.util.TimerInterceptor"/>
+         <interceptor-stack name="timer">
+            <interceptor-ref name="defaultStack"/>
+            <interceptor-ref name="timerInterceptor">
+            <param name="excludeMethods">index,login</param>
+            </interceptor-ref>
+         </interceptor-stack>
+      </interceptors>
+     <!-- 配置struts2框架运行时，默认执行自定义拦截器栈 -->
+     <default-interceptor-ref name="timerInterceptor"></default-interceptor-ref>
+   </package>
+</struts>
+其他package继承"base"，默认执行timerInterceptor拦截器（index,login方法除外！！！！）
+这样FIlter就可以帮你过滤了。
+        总结：上篇文章简单对拦截器有一个了解，今天 又学习了FIlter这个过滤器，
+除了使用方法不一样以外它们还有很多不同的地方，如：filter基于回调函数，我们需要实现的filter接口中doFilter方法就是
+回调函数，而interceptor则基于java本身的反射机制,这是两者最本质的区别，filter是依赖于servlet容器的，即只能在servlet容器中
+执行，很显然没有servlet容器就无法来回调doFilter方法。而interceptor与servlet容器无关，还有就是拦截器由spring管理，
+只对action起作用，不能拦截jsp页面、图片等其他资源。拦截器截获用户对action的访问，如需要跳转，只需如action一样返回
+一个result,spring根据result的配置执行跳转。如无需跳转，可调用invocation.invoke();方法来执行用户请求的action。
+拦截器在action之前开始，在action完成后结束。
+！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+SET TRANSACTION ISOLATION LEVEL
+一、未提交读READ UNCOMMITTED（脏读）
+意义：包含未提交数据的读。例如，在多用户环境下，用户B更改了某行。用户A在用户B提交更改之前读取已更改的行。如果此时用户B再回滚更改，则用户A便读取了逻辑上从未存在过的行。
+
+演示：
+1）用户B：
+BEGIN TRAN
+UPDATE test SET age=25 WHERE name = ‘AA’
+2）用户A：
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED（此句不写即默认为READ COMMITTED模式）
+SELECT * FROM test（此时将查到AA的age值为25）
+3）用户B：
+ROLLBACK（此时撤消了步骤1的UPDATE操作，则用户A读到的错误数据被称为脏读）
+二、提交读（READ COMMITTED）
+意义：指定在读取数据时控制共享锁以避免脏读。此隔离等级的主要作用是避免脏读。
+演示：
+1）用户B：
+BEGIN TRAN
+UPDATE test SET age=25 WHERE name = ‘AA’
+2）用户A：
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+SELECT * FROM test （上句设置了提交读模式，则此时将会查不到数据，显示查询等待中，直到用户B进行了ROLLBACK或者COMMIT操作后，此语句才会生效）
+三、不一致的分析REPEATABLE READ（重复读）
+意义：在多用户环境下，用户A开了一个事务，并且先对test表的某条记录做了查询（select * from test where name = ‘AA’），接着用户B对test表做了更新并提交（update test set age=25 where name=’AA’），这时A再去查test表中的这条记录，第一次读到的age值为12，第二次为25，两次读到的数据不一样，称之为重复读。
+解决办法：
+在用户A的事务运行之前，先设定SQL的隔离等级为REPEATABLE READ
+SQL语句为SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+这样在上图第一步中，用户A查询完之后，用户B将无法更新用户A所查询到的数据集中的任何数据（但是可以更新、插入和删除用户A查询到的数据集之外的数据），直到用户A事务结束才可以进行更新，这样就有效的防止了用户在同一个事务中读取到不一致的数据。
+四、幻象（SERIALIZABLE）
+意义：在多用户环境下，用户A开启了一个事务，并查询test表中的所有记录，然后用户B在自己的事务中插入（或删除）了test表中的一条记录并提交事务，此时用户A再去执行前面的查询整张表记录的操作，结果会多出（少了）一条记录，此操作称之为幻象。
+
+解决办法：
+在用户A的事务运行之前，先设定SQL的隔离等级为SERIALIZABLE
+语句为SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+这样在用户A的事务执行过程中，别的用户都将无法对任何数据进行更新、插入和删除的操作，直到用户A的事务回滚或者提交为止。这是四个隔离级别中限制最大的级别。因为并发级别较低，所以应只在必要时才使用该选项。
+
+锁的概念
+
+共享锁:为了共享读（select），如果存在事务（一个或多个）拥有对表中数据（关于锁数据的多少，视锁的粒度而定）的共享锁，不允许对锁定的数据进行更新(update)
+排他锁:只能有一个,其他的事务就不能对锁定的数据获取共享锁和排他锁（即排他锁与共享锁不能兼容，更多信息请查看锁兼容性），在此特别强调一下 锁定的数据。
+
+锁与隔离级别
+　　类型1
+　　①     READUNCOMMITTED：不发出锁
+　　②     READCOMMITTED：发出共享锁，保持到读取结束
+　　③     REPEATABLEREAD：发出共享锁，保持到事务结束
+　　④     SERIALIZABLE：发出共享锁，保持到事务结束
+　　类型2
+　　①     NOLOCK：不发出锁。等同于READUNCOMMITTED
+　　②     HOLDLOCK：发出共享锁，保持到事务结束。等同于SERIALIZABLE
+　　③     XLOCK：发出排他锁，保持到事务结束。
+　　④     UPDLOCK：发出更新锁，保持到事务事务结束。（更新锁：不阻塞别的事物，允许别的事物读数据（即更新锁可与共享锁兼容），但他确保自上次读取数据后数据没有被更新）
+　　⑤     READPAST：发出共享锁，但跳过锁定行，它不会被阻塞。适用条件：提交读的隔离级别，行级锁，select语句中。
+　　类型3
+　　①     ROWLOCK：行级锁
+　　②     PAGLOCK：页级锁
+　　③     TABLOCK：表锁
+　　④     TABLOCKX：表排他锁
+
+！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
