@@ -1,0 +1,66 @@
+Apache2.2+tomcat6负载均衡配置：
+1、安装Apache2.2服务启动
+
+在E:\test\Apache22\conf\httpd.conf文件中 添加如下配置
+ProxyRequests Off     
+ProxyPass /apachetomcat balancer://test/ stickysession=JSESSIONID--session粘贴     
+   <Proxy balancer://test/>           
+ 	BalancerMember ajp://localhost:8009/apachetomcat route=jvm1 loadfactor=50 keepalive=On       
+   	BalancerMember ajp://localhost:8019/apachetomcat route=jvm2 loadfactor=50 keepalive=On   
+  </Proxy>
+2、安装两个tomcat6--1
+在E:\test\tomcat2\conf\server.xml文件中  添加如下配置
+<Server port="8005" shutdown="SHUTDOWN">			  <!-- tomcat6--1-->
+<Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />  <!-- tomcat6--1-->
+<Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1">  <!-- tomcat6--1-->
+
+
+<Server port="8006" shutdown="SHUTDOWN">			  <!-- tomcat6--2-->
+<Connector port="8019" protocol="AJP/1.3" redirectPort="8443" />  <!-- tomcat6--2-->
+<Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm2">  <!-- tomcat6--2--> 
+
+
+<!-- session复制-->
+<Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"
+                 channelSendOptions="8">
+          <Manager className="org.apache.catalina.ha.session.DeltaManager"
+                   expireSessionsOnShutdown="false"
+                   notifyListenersOnReplication="true"/>
+          <Channel className="org.apache.catalina.tribes.group.GroupChannel">
+            <Membership className="org.apache.catalina.tribes.membership.McastService"
+                                                        mcastBindAddress="127.0.0.1"
+
+                        address="228.0.0.4"
+                        port="45564"
+                        frequency="500"
+                        dropTime="3000"/>
+            <Receiver className="org.apache.catalina.tribes.transport.nio.NioReceiver"
+                                               tcpListenAddress="127.0.0.1"
+
+                      address="auto"
+                      port="4000"
+                      autoBind="100"
+                      selectorTimeout="5000"
+                      maxThreads="6"/>
+            <Sender className="org.apache.catalina.tribes.transport.ReplicationTransmitter">
+              <Transport className="org.apache.catalina.tribes.transport.nio.PooledParallelSender"/>
+            </Sender>
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.TcpFailureDetector"/>
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.MessageDispatch15Interceptor"/>
+          </Channel>
+          <Valve className="org.apache.catalina.ha.tcp.ReplicationValve"
+
+                 filter=""/>
+          <Valve className="org.apache.catalina.ha.session.JvmRouteBinderValve"/>
+                  
+          <Deployer className="org.apache.catalina.ha.deploy.FarmWarDeployer"
+                    tempDir="/tmp/war-temp/"
+                    deployDir="/tmp/war-deploy/"
+                    watchDir="/tmp/war-listen/"
+                    watchEnabled="false"/>
+          <ClusterListener className="org.apache.catalina.ha.session.JvmRouteSessionIDBinderListener"/>
+          <ClusterListener className="org.apache.catalina.ha.session.ClusterSessionListener"/>
+        </Cluster>
+
+3、web.xml文件中
+添加:<distributable />
